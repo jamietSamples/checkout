@@ -1,0 +1,26 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
+WORKDIR /src
+COPY ["Checkout.PaymentGateway.Payment.Api/Checkout.PaymentGateway.Payment.Api.csproj", "Checkout.PaymentGateway.Payment.Api/"]
+COPY ["Checkout.PaymentGateway.Payment.Data/Checkout.PaymentGateway.Payment.Infrastructure.csproj", "Checkout.PaymentGateway.Payment.Data/"]
+COPY ["Checkout.PaymentGateway.Payment.Domain/Checkout.PaymentGateway.Payment.Domain.csproj", "Checkout.PaymentGateway.Payment.Domain/"]
+COPY ["Checkout.PaymentGateway.Payment.Service/Checkout.PaymentGateway.Payment.Application.csproj", "Checkout.PaymentGateway.Payment.Service/"]
+COPY ["Checkout.PaymentGateway.Acquirer/Checkout.PaymentGateway.Acquirer.csproj", "Checkout.PaymentGateway.Acquirer/"]
+RUN dotnet restore "Checkout.PaymentGateway.Payment.Api/Checkout.PaymentGateway.Payment.Api.csproj"
+COPY . .
+WORKDIR "/src/Checkout.PaymentGateway.Payment.Api"
+RUN dotnet build "Checkout.PaymentGateway.Payment.Api.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Checkout.PaymentGateway.Payment.Api.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Checkout.PaymentGateway.Payment.Api.dll", "http://*:5000"]

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Checkout.PaymentGateway.Acquirer\Checkout.PaymentGateway.Acquirer.csproj" />
+    <ProjectReference Include="..\Checkout.PaymentGateway.Payment.Data\Checkout.PaymentGateway.Payment.Infrastructure.csproj" />
+    <ProjectReference Include="..\Checkout.PaymentGateway.Payment.Domain\Checkout.PaymentGateway.Payment.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+  </ItemGroup>
+
+</Project>
